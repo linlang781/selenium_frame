@@ -1,0 +1,6 @@
+2018-05-15 14:51:41,918 - framework - INFO - 12345699999
+2018-05-15 14:56:20,884 - framework - INFO - 1111
+2018-05-15 15:16:28,465 - encrypt - ERROR - 请输入正确的加密方式，目前仅支持 MD5 或 SHA1
+NoneType: None
+2018-05-15 15:23:21,163 - mail.Email._attach_file - INFO - attach file C:\Users\Administrator\Desktop\Test_framworke-master\report\report.html
+2018-05-15 15:23:23,017 - mail.Email.send - INFO - 发送邮件"百度搜素测试报告"成功! 收件人：781456868@qq.com。如果没有收到邮件，请检查垃圾箱，同时检查收件人地址是否正确
