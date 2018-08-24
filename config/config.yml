@@ -1,4 +1,5 @@
-URL: https://www.fengmap.com
+URL: http://bj.tuanche.com/bentley/carList/
+New_car_url: http://bj.tuanche.com/brand/
 log:
     file_name: test.log.2018-5-15
     backup: 5

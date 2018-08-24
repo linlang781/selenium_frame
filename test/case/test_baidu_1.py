@@ -6,27 +6,20 @@ from utils.config import Config, DRIVER_PATH
 from test.common.browser import Browser
 
 
-class TestBaiDu(unittest.TestCase):
+class TestBaoming(unittest.TestCase):
     URL = Config().get('URL')
-
-    locator_kw = (By.ID, 'kw')
-    locator_su = (By.ID, 'su')
-    locator_result = (By.XPATH, '//div[contains(@class, "result")]/h3/a')
-
     def setUp(self):
-        self.driver = webdriver.Chrome(executable_path=DRIVER_PATH + '\chromedriver.exe')
+        self.driver = webdriver.Chrome()
         self.driver.get(self.URL)
+        self.driver.maximize_window()
 
     def tearDown(self):
         self.driver.quit()
 
     def test_search_0(self):
-        self.driver.find_element(*self.locator_kw).send_keys('selenium')
-        self.driver.find_element(*self.locator_su).click()
-        time.sleep(2)
-        links = self.driver.find_elements(*self.locator_result)
-        for link in links:
-            print(link.text)
+        name_warp = self.driver.find_element_by_xpath('/html/body/div[1]/div[1]/div/div/form/div[1]')
+        form_warp = self.driver.find_elements_by_class_name('formwrap')
+        form_warp[1].send_keys('name')
 
     def test_search_1(self):
         self.driver.find_element(*self.locator_kw).send_keys('Python selenium')

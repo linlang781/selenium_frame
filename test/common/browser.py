@@ -212,6 +212,20 @@ class Browser(object):
         '''执行js'''
         return self.driver.execute_script(js)
 
+    def js_remove_attribute(self, attribute, eleId, frame=None):
+        '''
+        :param attribute: 要删除的属性
+        :param eleId: 要删除属性的元素ID
+        :param frame: frame元素ID
+        :return:
+        '''
+        if frame is not None:
+            js = "window.document.getElementById('%s').contentWindow.document.getElementById('%s').removeAttribute('%s')" % (frame, eleId, attribute)
+            self.driver.execute_script(js)
+        else:
+            js = "window.document.getElementById('%s').removeAttribute('%s')" % (eleId, attribute)
+            self.driver.execute_script(js)
+
     def js_focus_element(self, element):
         '''聚焦元素'''
         self.driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -239,7 +253,7 @@ class Browser(object):
     def select_by_text(self, element, text):
         '''通过文本值定位'''
         element = self.find_element(element)
-        Select(element).select_by_value(text)
+        Select(element).select_by_visible_text(text)
 
     def is_text_in_element(self, element, text, timeout=10):
         """判断文本在元素里，没定位到元素返回False，定位到元素返回判断结果布尔值"""
