@@ -11,7 +11,10 @@ DATA_PATH = os.path.join(BASE_PATH, 'data')
 DRIVER_PATH = os.path.join(BASE_PATH, 'drivers')
 LOG_PATH = os.path.join(BASE_PATH, 'log')
 REPORT_PATH = os.path.join(BASE_PATH, 'report')
-
+CASE_PATH = os.path.join(BASE_PATH, 'testcase')
+IMG_PATH = os.path.join(BASE_PATH, 'image')
+SIKULI_IMG_PATH = os.path.join(BASE_PATH, 'image\SikuliPic')
+ERROR_IMG_PATH = os.path.join(BASE_PATH, 'image\error_img')
 
 class Config:
     def __init__(self, config=CONFIG_FILE):

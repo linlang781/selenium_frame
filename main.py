@@ -1,29 +1,49 @@
 #!/usr/bin/env python
 # encoding: utf-8
-from utils.log import Logger
+from utils.log import LOG
 import unittest, time
-from utils.HTMLTestRunner import HTMLTestRunner
-from utils.mail import Email
-from utils.config import REPORT_PATH
-logger=Logger().get_logger()
-test_dir = './test/case'
-discover = unittest.defaultTestLoader.discover(test_dir, pattern='test*.py')
-if __name__ == '__main__':
-    now = time.strftime('%Y-%m-%d %H_%M_%S')
-    report_file_name = './report/' + now + 'result.html'
+from utils.BSTestRunner import BSTestRunner
+from utils.SendMail import SendEmail
+from utils.config import REPORT_PATH, CASE_PATH
+from utils.config import Config
+from utils.log import LOG
+
+config = Config()
+report_title = config.get('report_conf')['report_title']
+report_desc = config.get('report_conf')['report_desc']
+mail_to_list = config.get('mail_send_conf')['send_to']
+mail_to_cc = config.get('mail_send_conf')['send_cc']
+mail_title = config.get('mail_send_conf')['mail_title']
+email_username = config.get('mail_base_conf')['username']
+email_passwd = config.get('mail_base_conf')['passwd']
+email_smtp = config.get('mail_base_conf')['smtp']
+now = time.strftime('%Y-%m-%d %H_%M_%S')
+report_file_name = REPORT_PATH + now + 'result.html'
+
+def add_case(case_path=CASE_PATH, rule='test*.py'):
+    discover = unittest.defaultTestLoader.discover(case_path, pattern=rule)
+    return discover
+
+
+def run_case(all_case):
     fp = open(report_file_name, 'wb')
-    runner = HTMLTestRunner(stream=fp, title='接口自动化测试报告', description='用例执行情况如下')
-    runner.run(discover)
+    runner = BSTestRunner(stream=fp, title=report_title, description=report_desc)
+    runner.run(all_case)
     fp.close()
-    to_list = ['liuyu01@fengmap.com']
-    cc_list = ['liuyu01@fengmap.com']
+
+
+def send_report_mail():
     file_path_tuple = (report_file_name,)
-    email_username = ConfigOperate().get_config('email', 'username')
-    email_passwd = ConfigOperate().get_config('email', 'passwd')
-    email_smtp = ConfigOperate().get_config('email', 'smtp')
-    send_conf = Email(email_smtp, email_username, email_passwd)
-    if send_conf.send_email(to_list, cc_list, sub='接口测试报告' + now, content=open(report_file_name, 'rb').read(), file_path=file_path_tuple):   # content=open(report_file_name, 'rb').read()
-        print('发送成功')
+    send_conf = SendEmail(email_smtp, email_username, email_passwd)
+    if send_conf.send_email(mail_to_list, mail_to_cc, sub=mail_title + now, content=open(report_file_name, 'rb').read(), file_path=file_path_tuple):   # content=open(report_file_name, 'rb').read()
+        LOG.info('测试邮件发送成功，测试时间{0}'.format(now))
     else:
-        print('发送失败')
+        LOG.info('测试邮件发送失败，测试时间{0}'.format(now))
+
+if __name__ == '__main__':
+    run_case(add_case())
+    send_report_mail()
+
+
+
 

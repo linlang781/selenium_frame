@@ -2,56 +2,57 @@
 # encoding: utf-8
 
 """
-日志类。通过读取配置文件，定义日志级别、日志文件名、日志格式等。
-一般直接把logger import进去
-from utils.log import logger
-logger.info('test log')
+@version: 1.0
+@author: liuyu
+@license: None
+@file: printlog.py
+@time: 17-4-7 上午2:03
 """
 import os
-import logging
-from logging.handlers import TimedRotatingFileHandler
-from utils.config import LOG_PATH, Config
+import logbook
+from logbook.more import ColorizedStderrHandler
+from functools import wraps
+
+LOG_DIR = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))), 'log')
+file_stream = False
+
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+    file_stream = True
 
 
-class Logger(object):
-    def __init__(self, logger_name='undefind'):
-        self.logger = logging.getLogger(logger_name)
-        logging.root.setLevel(logging.NOTSET)
-        c = Config().get('log')
-        self.log_file_name = c.get('file_name') if c and c.get('file_name') else 'test.log'  # 日志文件
-        self.backup_count = c.get('backup') if c and c.get('backup') else 5  # 保留的日志数量
-        # 日志输出级别
-        self.console_output_level = c.get('console_level') if c and c.get('console_level') else 'WARNING'
-        self.file_output_level = c.get('file_level') if c and c.get('file_level') else 'DEBUG'
-        # 日志输出格式
-        pattern = c.get('pattern') if c and c.get('pattern') else '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-        self.formatter = logging.Formatter(pattern)
+def get_logger(name='selenium', file_log=file_stream, level=''):
+    """ get logger Factory function """
+    logbook.set_datetime_format('local')
+    ColorizedStderrHandler(bubble=False, level=level).push_thread()
+    logbook.TimedRotatingFileHandler(
+        os.path.join(LOG_DIR, '%s.log' % name),
+        date_format='%Y-%m-%d-%H', bubble=True, encoding='utf-8').push_thread()
+    return logbook.Logger(name)
 
-    def get_logger(self):
-        """在logger中添加日志句柄并返回，如果logger已有句柄，则直接返回
-        我们这里添加两个句柄，一个输出日志到控制台，另一个输出到日志文件。
-        两个句柄的日志级别不同，在配置文件中可设置。
-        """
-        if not self.logger.handlers:  # 避免重复日志
-            console_handler = logging.StreamHandler()
-            console_handler.setFormatter(self.formatter)
-            console_handler.setLevel(self.console_output_level)
-            self.logger.addHandler(console_handler)
 
-            # 每天重新创建一个日志文件，最多保留backup_count份
-            file_handler = TimedRotatingFileHandler(filename=os.path.join(LOG_PATH, self.log_file_name),
-                                                    when='D',
-                                                    interval=1,
-                                                    backupCount=self.backup_count,
-                                                    delay=True,
-                                                    encoding='utf-8'
-                                                    )
-            file_handler.setFormatter(self.formatter)
-            file_handler.setLevel(self.file_output_level)
-            self.logger.addHandler(file_handler)
-        return self.logger
+LOG = get_logger(file_log=file_stream, level='INFO')
 
+
+def logger(param):
+    """ fcuntion from logger meta """
+
+    def wrap(function):
+        """ logger wrapper """
+
+        @wraps(function)
+        def _wrap(*args, **kwargs):
+            """ wrap tool """
+            LOG.info("当前模块 {}".format(param))
+            LOG.info("全部args参数参数信息 , {}".format(str(args)))
+            LOG.info("全部kwargs参数信息 , {}".format(str(kwargs)))
+            return function(*args, **kwargs)
+
+        return _wrap
+
+    return wrap
 
 
 if __name__ == '__main__':
-    pass
+    LOG.info('3333990')
+

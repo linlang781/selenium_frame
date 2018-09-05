@@ -3,8 +3,7 @@
 """一些支持方法，比如加密"""
 import hashlib
 import time
-from utils.log import Logger
-
+from utils.log import LOG
 
 class EncryptError(Exception):
     pass
@@ -32,14 +31,13 @@ def sign(sign_dict, private_key=None, encrypt_way='MD5'):
 
 def encrypt(string, salt='', encrypt_way='MD5'):
     u"""根据输入的string与加密盐，按照encrypt方式进行加密，并返回加密后的字符串"""
-    logger = Logger('support.encrypt').get_logger()
     string += salt
     if encrypt_way.upper() == 'MD5':
         hash_string = hashlib.md5()
     elif encrypt_way.upper() == 'SHA1':
         hash_string = hashlib.sha1()
     else:
-        logger.exception(EncryptError('请输入正确的加密方式，目前仅支持 MD5 或 SHA1'))
+        LOG.error(EncryptError('请输入正确的加密方式，目前仅支持 MD5 或 SHA1'))
         return False
 
     hash_string.update(string.encode())
@@ -54,4 +52,4 @@ def getnowtime():
     return nows
 
 if __name__ == '__main__':
-    print(encrypt('100000307111111', '', 'b64'))
+    print(encrypt('100000307111111', '', 'MD5'))

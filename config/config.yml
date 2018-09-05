@@ -1,10 +1,24 @@
-URL: http://bj.tuanche.com/bentley/carList/
-New_car_url: http://bj.tuanche.com/brand/
+URL:
+    car_url: http://bj.tuanche.com/bentley/carList/
+    new_car_url: http://bj.tuanche.com/brand/
 log:
-    file_name: test.log.2018-5-15
+    file_name: test.log
     backup: 5
     console_level: WARNING
     file_level: DEBUG
     pattern: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-ip: 127.0.0.1
-port: 8080
+mail_base_conf:
+    username:
+    passwd:
+    smtp:
+
+mail_send_conf:
+    send_to: [yu.liu03011@tuanche.com, 781456868@qq.com]
+    send_cc: [yu.liu03011@tuanche.com, 781456868@qq.com]
+    mail_title: '这是测试报告'
+
+report_conf:
+    report_title: '测试报告'
+    report_desc: '测试报告描述'
+
+
